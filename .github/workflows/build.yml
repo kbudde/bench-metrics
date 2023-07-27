@@ -2,7 +2,7 @@ name: build
 
 on:
   push:
-    branches: [ "main", "action" ]
+    branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
 
@@ -32,7 +32,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Set up Docker
-        uses: docker/setup-buildx-action@v1
+        uses: docker/setup-buildx-action@v2
 
       - name: Build Docker image
         run: |
@@ -40,7 +40,7 @@ jobs:
           docker tag kbudde/bench-metrics:${{ github.sha }} kbudde/bench-metrics:latest
 
       - name: Login to Docker Hub
-        uses: docker/login-action@v1
+        uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
