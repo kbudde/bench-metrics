@@ -1,3 +1,5 @@
+[![build](https://github.com/kbudde/bench-metrics/actions/workflows/build.yml/badge.svg)](https://github.com/kbudde/bench-metrics/actions/workflows/build.yml) 
+
 # bench-metrics
 
 `bench-metrics` is a Prometheus exporter that exports histograms for the duration of queries send to a Prometheus-compatible API (Thanos, VictoriaMetrics, ...).

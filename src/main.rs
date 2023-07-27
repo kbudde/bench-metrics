@@ -135,9 +135,9 @@ async fn handler(
     for (name, query) in pc.queries.clone() {
         let timer = PROM_REQ_HISTOGRAM.with_label_values(&[&name]).start_timer();
         let result = client.query(&query).get().await;
-        if let Err(error)=result{
-                log::warn!("running up query {}", error);
-                PROM_FAILED_COUNTER.with_label_values(&[&query]).inc();
+        if let Err(error) = result {
+            log::warn!("running up query {}", error);
+            PROM_FAILED_COUNTER.with_label_values(&[&query]).inc();
         }
         timer.observe_duration();
     }
