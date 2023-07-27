@@ -1,0 +1,6 @@
+url: http://localhost:10902/
+queries_example: topk by (code) (5, prometheus_http_requests_total)
+queries_count_up: count(up)
+queries_min_over_time__up: min_over_time(count(up)[24h:1m])
+queries_unavailable_apiservice: (1 - max by (name, namespace, cluster) (avg_over_time(aggregator_unavailable_apiservice[10m]))) * 100 < 85
+queries_memory_usage: sum(container_memory_rss{job="kubelet", container!=""}) by (namespace)
