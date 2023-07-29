@@ -22,12 +22,12 @@ COPY ./src ./src
 RUN cargo build --release
 
 # our final base
-FROM debian:buster-slim
+# FROM debian:buster-slim
 
-RUN apt update && apt install libssl1.1 -y && rm -rf /var/lib/apt/lists/*
+# RUN apt update && apt search libc && apt install libssl1.1 glibc -y && rm -rf /var/lib/apt/lists/*
 
 # copy the build artifact from the build stage
-COPY --from=build /bench-metrics/target/release/bench-metrics .
+#COPY --from=build /bench-metrics/target/release/bench-metrics .
 
 # set the startup command to run your binary
-CMD ["./bench-metrics"]
+CMD ["/bench-metrics/target/release/bench-metrics"]
