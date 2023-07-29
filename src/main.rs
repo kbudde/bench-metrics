@@ -1,5 +1,8 @@
-use prometheus::register_counter_vec;
-use prometheus::CounterVec;
+use chrono::{Duration, Utc};
+use lazy_static::lazy_static;
+use prometheus::{register_counter_vec, register_gauge_vec, register_histogram_vec};
+use prometheus::{CounterVec, GaugeVec, HistogramVec};
+use prometheus::{Encoder, TextEncoder};
 use prometheus_http_query::Client;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
@@ -15,10 +18,6 @@ use hyper::{
     service::{make_service_fn, service_fn},
     Body, Request, Response, Server,
 };
-use prometheus::{Encoder, HistogramVec, TextEncoder};
-
-use lazy_static::lazy_static;
-use prometheus::register_histogram_vec;
 
 lazy_static! {
     static ref PROM_REQ_HISTOGRAM: HistogramVec = register_histogram_vec!(
@@ -33,7 +32,16 @@ lazy_static! {
         &["query"]
     )
     .unwrap();
+    static ref PROM_METRICS_LEN: GaugeVec = register_gauge_vec!(
+        "benchem_prom_timeseries",
+        "Number of timeseries return by prometheus.",
+        &["query"]
+    )
+    .unwrap();
 }
+
+const QUERY_RANGE: u64 = 24 * 60 * 60; // 24h
+const QUERY_STEPS: f64 = 30.0;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
@@ -123,24 +131,77 @@ impl PrometheusClient {
         };
         Ok(pc)
     }
+
+    async fn query_range(&self, name: &str, query: &str) {
+        let end = Utc::now();
+        let start = end - Duration::seconds(QUERY_RANGE as i64);
+
+        let start = start.timestamp();
+        let end = end.timestamp();
+
+        let steps = QUERY_STEPS;
+
+        let timer = PROM_REQ_HISTOGRAM.with_label_values(&[&name]).start_timer();
+        let result = self
+            .client
+            .query_range(&query, start, end, steps)
+            .get()
+            .await;
+
+        if let Err(error) = result {
+            log::warn!(name=name, query=query, error=log::as_display!(error); "query range failed");
+            PROM_FAILED_COUNTER.with_label_values(&[&name]).inc();
+            timer.stop_and_discard();
+            return;
+        }
+        if let Ok(metrics) = result {
+            match metrics.data() {
+                prometheus_http_query::response::Data::Scalar(_) => {
+                    log::warn!(name=name, query=query, error="Unexpected scalar data"; "query range failed")
+                }
+                prometheus_http_query::response::Data::Vector(_) => {
+                    log::warn!(name=name, query=query, error="Unexpected vector data"; "query range failed")
+                }
+                prometheus_http_query::response::Data::Matrix(m) => {
+                    timer.observe_duration();
+                    PROM_METRICS_LEN
+                        .with_label_values(&[&name])
+                        .set(m.len() as f64);
+                }
+            }
+        }
+    }
+
+    /// Queries all the configured Prometheus queries asynchronously.
+    ///
+    /// This function iterates over all the queries defined in the PrometheusClient's configuration
+    /// and executes each query using the underlying HTTP client. It also measures the execution time
+    /// and logs any errors encountered during the query execution.
+    /// It is using the prometheus query_range endpoint => data for QUERY_RANGE seconds is retrieved
+    async fn query_all(&self) {
+        for (name, query) in self.queries.clone() {
+            self.query_range(&name, &query).await;
+        }
+    }
 }
 
 async fn handler(
     _req: Request<Body>,
     pc: Arc<PrometheusClient>,
 ) -> Result<Response<Body>, hyper::Error> {
-    let client = &pc.client;
     let encoder = TextEncoder::new();
 
-    for (name, query) in pc.queries.clone() {
-        let timer = PROM_REQ_HISTOGRAM.with_label_values(&[&name]).start_timer();
-        let result = client.query(&query).get().await;
-        if let Err(error) = result {
-            log::warn!("running up query {}", error);
-            PROM_FAILED_COUNTER.with_label_values(&[&query]).inc();
-        }
-        timer.observe_duration();
-    }
+    pc.query_all().await;
+    // let client = &pc.client;
+    // for (name, query) in pc.queries.clone() {
+    //     let timer = PROM_REQ_HISTOGRAM.with_label_values(&[&name]).start_timer();
+    //     let result = client.query(&query).get().await;
+    //     if let Err(error) = result {
+    //         log::warn!("running up query {}", error);
+    //         PROM_FAILED_COUNTER.with_label_values(&[&query]).inc();
+    //     }
+    //     timer.observe_duration();
+    // }
 
     let metric_families = prometheus::gather();
     let mut buffer = vec![];
