@@ -43,6 +43,7 @@ lazy_static! {
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
     init_logger();
+    log::info!("Benchem started");
 
     let config = match envy::prefixed("BENCH_").from_env::<Config>() {
         Ok(cfg) => Ok(cfg),
