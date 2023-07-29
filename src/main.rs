@@ -155,16 +155,16 @@ impl PrometheusClient {
 
         let steps = self.steps;
 
-        let timer = PROM_REQ_HISTOGRAM.with_label_values(&[&name]).start_timer();
+        let timer = PROM_REQ_HISTOGRAM.with_label_values(&[name]).start_timer();
         let result = self
             .client
-            .query_range(&query, start, end, steps)
+            .query_range(query, start, end, steps)
             .get()
             .await;
 
         if let Err(error) = result {
             log::warn!(name=name, query=query, error=log::as_display!(error); "query range failed");
-            PROM_FAILED_COUNTER.with_label_values(&[&name]).inc();
+            PROM_FAILED_COUNTER.with_label_values(&[name]).inc();
             timer.stop_and_discard();
             return;
         }
@@ -179,7 +179,7 @@ impl PrometheusClient {
                 prometheus_http_query::response::Data::Matrix(m) => {
                     timer.observe_duration();
                     PROM_METRICS_LEN
-                        .with_label_values(&[&name])
+                        .with_label_values(&[name])
                         .set(m.len() as f64);
                 }
             }
