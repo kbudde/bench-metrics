@@ -32,79 +32,86 @@ The application is listening on port 9898.
 
 ## example
 
-```
+```python
+# HELP benchem_prom_timeseries Number of timeseries return by prometheus.
+# TYPE benchem_prom_timeseries gauge
+benchem_prom_timeseries{query="count_up"} 1
+benchem_prom_timeseries{query="example"} 7
+benchem_prom_timeseries{query="memory_usage"} 33
+benchem_prom_timeseries{query="min_over_time__up"} 1
+benchem_prom_timeseries{query="unavailable_apiservice"} 1
 # HELP benchem_prometheus_request_duration_seconds The prometheus request latencies in seconds.
 # TYPE benchem_prometheus_request_duration_seconds histogram
 benchem_prometheus_request_duration_seconds_bucket{query="count_up",le="0.005"} 0
 benchem_prometheus_request_duration_seconds_bucket{query="count_up",le="0.01"} 0
 benchem_prometheus_request_duration_seconds_bucket{query="count_up",le="0.025"} 0
-benchem_prometheus_request_duration_seconds_bucket{query="count_up",le="0.05"} 1
-benchem_prometheus_request_duration_seconds_bucket{query="count_up",le="0.1"} 2
-benchem_prometheus_request_duration_seconds_bucket{query="count_up",le="0.25"} 2
-benchem_prometheus_request_duration_seconds_bucket{query="count_up",le="0.5"} 2
-benchem_prometheus_request_duration_seconds_bucket{query="count_up",le="1"} 2
-benchem_prometheus_request_duration_seconds_bucket{query="count_up",le="2.5"} 2
-benchem_prometheus_request_duration_seconds_bucket{query="count_up",le="5"} 2
-benchem_prometheus_request_duration_seconds_bucket{query="count_up",le="10"} 2
-benchem_prometheus_request_duration_seconds_bucket{query="count_up",le="+Inf"} 2
-benchem_prometheus_request_duration_seconds_sum{query="count_up"} 0.094481327
-benchem_prometheus_request_duration_seconds_count{query="count_up"} 2
+benchem_prometheus_request_duration_seconds_bucket{query="count_up",le="0.05"} 3
+benchem_prometheus_request_duration_seconds_bucket{query="count_up",le="0.1"} 3
+benchem_prometheus_request_duration_seconds_bucket{query="count_up",le="0.25"} 4
+benchem_prometheus_request_duration_seconds_bucket{query="count_up",le="0.5"} 4
+benchem_prometheus_request_duration_seconds_bucket{query="count_up",le="1"} 4
+benchem_prometheus_request_duration_seconds_bucket{query="count_up",le="2.5"} 4
+benchem_prometheus_request_duration_seconds_bucket{query="count_up",le="5"} 4
+benchem_prometheus_request_duration_seconds_bucket{query="count_up",le="10"} 4
+benchem_prometheus_request_duration_seconds_bucket{query="count_up",le="+Inf"} 4
+benchem_prometheus_request_duration_seconds_sum{query="count_up"} 0.22450714
+benchem_prometheus_request_duration_seconds_count{query="count_up"} 4
 benchem_prometheus_request_duration_seconds_bucket{query="example",le="0.005"} 0
 benchem_prometheus_request_duration_seconds_bucket{query="example",le="0.01"} 0
 benchem_prometheus_request_duration_seconds_bucket{query="example",le="0.025"} 0
 benchem_prometheus_request_duration_seconds_bucket{query="example",le="0.05"} 0
 benchem_prometheus_request_duration_seconds_bucket{query="example",le="0.1"} 1
-benchem_prometheus_request_duration_seconds_bucket{query="example",le="0.25"} 2
-benchem_prometheus_request_duration_seconds_bucket{query="example",le="0.5"} 2
-benchem_prometheus_request_duration_seconds_bucket{query="example",le="1"} 2
-benchem_prometheus_request_duration_seconds_bucket{query="example",le="2.5"} 2
-benchem_prometheus_request_duration_seconds_bucket{query="example",le="5"} 2
-benchem_prometheus_request_duration_seconds_bucket{query="example",le="10"} 2
-benchem_prometheus_request_duration_seconds_bucket{query="example",le="+Inf"} 2
-benchem_prometheus_request_duration_seconds_sum{query="example"} 0.157936939
-benchem_prometheus_request_duration_seconds_count{query="example"} 2
+benchem_prometheus_request_duration_seconds_bucket{query="example",le="0.25"} 4
+benchem_prometheus_request_duration_seconds_bucket{query="example",le="0.5"} 4
+benchem_prometheus_request_duration_seconds_bucket{query="example",le="1"} 4
+benchem_prometheus_request_duration_seconds_bucket{query="example",le="2.5"} 4
+benchem_prometheus_request_duration_seconds_bucket{query="example",le="5"} 4
+benchem_prometheus_request_duration_seconds_bucket{query="example",le="10"} 4
+benchem_prometheus_request_duration_seconds_bucket{query="example",le="+Inf"} 4
+benchem_prometheus_request_duration_seconds_sum{query="example"} 0.5261183490000001
+benchem_prometheus_request_duration_seconds_count{query="example"} 4
 benchem_prometheus_request_duration_seconds_bucket{query="memory_usage",le="0.005"} 0
 benchem_prometheus_request_duration_seconds_bucket{query="memory_usage",le="0.01"} 0
 benchem_prometheus_request_duration_seconds_bucket{query="memory_usage",le="0.025"} 0
 benchem_prometheus_request_duration_seconds_bucket{query="memory_usage",le="0.05"} 0
 benchem_prometheus_request_duration_seconds_bucket{query="memory_usage",le="0.1"} 2
-benchem_prometheus_request_duration_seconds_bucket{query="memory_usage",le="0.25"} 2
-benchem_prometheus_request_duration_seconds_bucket{query="memory_usage",le="0.5"} 2
-benchem_prometheus_request_duration_seconds_bucket{query="memory_usage",le="1"} 2
-benchem_prometheus_request_duration_seconds_bucket{query="memory_usage",le="2.5"} 2
-benchem_prometheus_request_duration_seconds_bucket{query="memory_usage",le="5"} 2
-benchem_prometheus_request_duration_seconds_bucket{query="memory_usage",le="10"} 2
-benchem_prometheus_request_duration_seconds_bucket{query="memory_usage",le="+Inf"} 2
-benchem_prometheus_request_duration_seconds_sum{query="memory_usage"} 0.12306187700000001
-benchem_prometheus_request_duration_seconds_count{query="memory_usage"} 2
+benchem_prometheus_request_duration_seconds_bucket{query="memory_usage",le="0.25"} 4
+benchem_prometheus_request_duration_seconds_bucket{query="memory_usage",le="0.5"} 4
+benchem_prometheus_request_duration_seconds_bucket{query="memory_usage",le="1"} 4
+benchem_prometheus_request_duration_seconds_bucket{query="memory_usage",le="2.5"} 4
+benchem_prometheus_request_duration_seconds_bucket{query="memory_usage",le="5"} 4
+benchem_prometheus_request_duration_seconds_bucket{query="memory_usage",le="10"} 4
+benchem_prometheus_request_duration_seconds_bucket{query="memory_usage",le="+Inf"} 4
+benchem_prometheus_request_duration_seconds_sum{query="memory_usage"} 0.465249465
+benchem_prometheus_request_duration_seconds_count{query="memory_usage"} 4
 benchem_prometheus_request_duration_seconds_bucket{query="min_over_time__up",le="0.005"} 0
 benchem_prometheus_request_duration_seconds_bucket{query="min_over_time__up",le="0.01"} 0
 benchem_prometheus_request_duration_seconds_bucket{query="min_over_time__up",le="0.025"} 0
-benchem_prometheus_request_duration_seconds_bucket{query="min_over_time__up",le="0.05"} 0
-benchem_prometheus_request_duration_seconds_bucket{query="min_over_time__up",le="0.1"} 0
-benchem_prometheus_request_duration_seconds_bucket{query="min_over_time__up",le="0.25"} 1
-benchem_prometheus_request_duration_seconds_bucket{query="min_over_time__up",le="0.5"} 1
-benchem_prometheus_request_duration_seconds_bucket{query="min_over_time__up",le="1"} 1
-benchem_prometheus_request_duration_seconds_bucket{query="min_over_time__up",le="2.5"} 2
-benchem_prometheus_request_duration_seconds_bucket{query="min_over_time__up",le="5"} 2
-benchem_prometheus_request_duration_seconds_bucket{query="min_over_time__up",le="10"} 2
-benchem_prometheus_request_duration_seconds_bucket{query="min_over_time__up",le="+Inf"} 2
-benchem_prometheus_request_duration_seconds_sum{query="min_over_time__up"} 2.348106937
-benchem_prometheus_request_duration_seconds_count{query="min_over_time__up"} 2
+benchem_prometheus_request_duration_seconds_bucket{query="min_over_time__up",le="0.05"} 3
+benchem_prometheus_request_duration_seconds_bucket{query="min_over_time__up",le="0.1"} 4
+benchem_prometheus_request_duration_seconds_bucket{query="min_over_time__up",le="0.25"} 4
+benchem_prometheus_request_duration_seconds_bucket{query="min_over_time__up",le="0.5"} 4
+benchem_prometheus_request_duration_seconds_bucket{query="min_over_time__up",le="1"} 4
+benchem_prometheus_request_duration_seconds_bucket{query="min_over_time__up",le="2.5"} 4
+benchem_prometheus_request_duration_seconds_bucket{query="min_over_time__up",le="5"} 4
+benchem_prometheus_request_duration_seconds_bucket{query="min_over_time__up",le="10"} 4
+benchem_prometheus_request_duration_seconds_bucket{query="min_over_time__up",le="+Inf"} 4
+benchem_prometheus_request_duration_seconds_sum{query="min_over_time__up"} 0.16513146899999998
+benchem_prometheus_request_duration_seconds_count{query="min_over_time__up"} 4
 benchem_prometheus_request_duration_seconds_bucket{query="unavailable_apiservice",le="0.005"} 0
 benchem_prometheus_request_duration_seconds_bucket{query="unavailable_apiservice",le="0.01"} 0
 benchem_prometheus_request_duration_seconds_bucket{query="unavailable_apiservice",le="0.025"} 0
 benchem_prometheus_request_duration_seconds_bucket{query="unavailable_apiservice",le="0.05"} 2
-benchem_prometheus_request_duration_seconds_bucket{query="unavailable_apiservice",le="0.1"} 2
-benchem_prometheus_request_duration_seconds_bucket{query="unavailable_apiservice",le="0.25"} 2
-benchem_prometheus_request_duration_seconds_bucket{query="unavailable_apiservice",le="0.5"} 2
-benchem_prometheus_request_duration_seconds_bucket{query="unavailable_apiservice",le="1"} 2
-benchem_prometheus_request_duration_seconds_bucket{query="unavailable_apiservice",le="2.5"} 2
-benchem_prometheus_request_duration_seconds_bucket{query="unavailable_apiservice",le="5"} 2
-benchem_prometheus_request_duration_seconds_bucket{query="unavailable_apiservice",le="10"} 2
-benchem_prometheus_request_duration_seconds_bucket{query="unavailable_apiservice",le="+Inf"} 2
-benchem_prometheus_request_duration_seconds_sum{query="unavailable_apiservice"} 0.08635997100000001
-benchem_prometheus_request_duration_seconds_count{query="unavailable_apiservice"} 2
+benchem_prometheus_request_duration_seconds_bucket{query="unavailable_apiservice",le="0.1"} 4
+benchem_prometheus_request_duration_seconds_bucket{query="unavailable_apiservice",le="0.25"} 4
+benchem_prometheus_request_duration_seconds_bucket{query="unavailable_apiservice",le="0.5"} 4
+benchem_prometheus_request_duration_seconds_bucket{query="unavailable_apiservice",le="1"} 4
+benchem_prometheus_request_duration_seconds_bucket{query="unavailable_apiservice",le="2.5"} 4
+benchem_prometheus_request_duration_seconds_bucket{query="unavailable_apiservice",le="5"} 4
+benchem_prometheus_request_duration_seconds_bucket{query="unavailable_apiservice",le="10"} 4
+benchem_prometheus_request_duration_seconds_bucket{query="unavailable_apiservice",le="+Inf"} 4
+benchem_prometheus_request_duration_seconds_sum{query="unavailable_apiservice"} 0.203665646
+benchem_prometheus_request_duration_seconds_count{query="unavailable_apiservice"} 4
 # HELP process_cpu_seconds_total Total user and system CPU time spent in seconds.
 # TYPE process_cpu_seconds_total counter
 process_cpu_seconds_total 0
@@ -113,19 +120,19 @@ process_cpu_seconds_total 0
 process_max_fds 1024
 # HELP process_open_fds Number of open file descriptors.
 # TYPE process_open_fds gauge
-process_open_fds 16
+process_open_fds 17
 # HELP process_resident_memory_bytes Resident memory size in bytes.
 # TYPE process_resident_memory_bytes gauge
-process_resident_memory_bytes 16941056
+process_resident_memory_bytes 23588864
 # HELP process_start_time_seconds Start time of the process since unix epoch in seconds.
 # TYPE process_start_time_seconds gauge
-process_start_time_seconds 1690483337
+process_start_time_seconds 1690617314
 # HELP process_threads Number of OS threads in the process.
 # TYPE process_threads gauge
-process_threads 5
+process_threads 6
 # HELP process_virtual_memory_bytes Virtual memory size in bytes.
 # TYPE process_virtual_memory_bytes gauge
-process_virtual_memory_bytes 369057792
+process_virtual_memory_bytes 371343360
 ```
 
 
