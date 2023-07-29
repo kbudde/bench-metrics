@@ -1,4 +1,4 @@
-FROM rust:1.71 as build
+FROM rust:1.71-slim-buster as build
 # Found at https://dev.to/rogertorres/first-steps-with-docker-rust-30oi
 
 # create a new empty shell project
@@ -8,6 +8,8 @@ WORKDIR /bench-metrics
 # copy over your manifests
 COPY ./Cargo.lock ./Cargo.lock
 COPY ./Cargo.toml ./Cargo.toml
+
+RUN apt update && apt install pkg-config libssl-dev -y && rm -rf /var/lib/apt/lists/*
 
 # this build step will cache your dependencies
 RUN cargo build --release && \
@@ -22,12 +24,12 @@ COPY ./src ./src
 RUN cargo build --release
 
 # our final base
-# FROM debian:buster-slim
+FROM debian:buster-slim
 
-# RUN apt update && apt search libc && apt install libssl1.1 glibc -y && rm -rf /var/lib/apt/lists/*
+RUN apt update && apt install libssl1.1 -y && rm -rf /var/lib/apt/lists/*
 
 # copy the build artifact from the build stage
-#COPY --from=build /bench-metrics/target/release/bench-metrics .
+COPY --from=build /bench-metrics/target/release/bench-metrics .
 
 # set the startup command to run your binary
-CMD ["/bench-metrics/target/release/bench-metrics"]
+CMD ["./bench-metrics"]
