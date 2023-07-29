@@ -1,4 +1,3 @@
-use chrono::{Duration, Utc};
 use lazy_static::lazy_static;
 use prometheus::{register_counter_vec, register_gauge_vec, register_histogram_vec};
 use prometheus::{CounterVec, GaugeVec, HistogramVec};
@@ -11,6 +10,7 @@ use std::fs::File;
 use std::io::prelude::*;
 use std::io::stdout;
 use std::sync::Arc;
+use std::time::{Duration, SystemTime};
 use structured_logger::{json::new_writer, Builder};
 
 use hyper::{
@@ -84,7 +84,7 @@ fn init_logger() {
 // https://github.com/softprops/envy/issues/56
 serde_with::with_prefix!(queries "queries_");
 
-fn default_query_range_secs() -> i64 {
+fn default_query_range_secs() -> u64 {
     7200
 }
 fn default_query_range_steps() -> f64 {
@@ -95,7 +95,7 @@ fn default_query_range_steps() -> f64 {
 struct Config {
     url: String,
     #[serde(default = "default_query_range_secs")]
-    query_range_secs: i64,
+    query_range_secs: u64,
     #[serde(default = "default_query_range_steps")]
     query_range_steps: f64,
     // PREFIX_QUERIES_X=y will map to Hashmap {"x": "y"}
@@ -118,7 +118,7 @@ impl Config {
 struct PrometheusClient {
     client: Client,
     queries: HashMap<String, String>,
-    range: i64,
+    range: u64,
     steps: f64,
 }
 
@@ -148,11 +148,17 @@ impl PrometheusClient {
     }
 
     async fn query_range(&self, name: &str, query: &str) {
-        let end = Utc::now();
-        let start = end - Duration::seconds(self.range);
+        let end = SystemTime::now();
+        let start = end - Duration::from_secs(self.range);
 
-        let start = start.timestamp();
-        let end = end.timestamp();
+        let start = start
+            .duration_since(SystemTime::UNIX_EPOCH)
+            .unwrap()
+            .as_secs() as i64;
+        let end = end
+            .duration_since(SystemTime::UNIX_EPOCH)
+            .unwrap()
+            .as_secs() as i64;
 
         let steps = self.steps;
 
