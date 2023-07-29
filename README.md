@@ -133,6 +133,8 @@ process_virtual_memory_bytes 369057792
 
 Contributions are welcome! If you find a bug or have a feature request, please open an issue on GitHub. If you want to contribute code, please fork the repository and submit a pull request.
 
+Use [lefhook](https://github.com/evilmartians/lefthook) to lint pre-commit. After installation it can be enabled with `lefthook install -f`.
+
 ## License
 
 `bench-metrics` is licensed under the MIT License. See the LICENSE file for details.
