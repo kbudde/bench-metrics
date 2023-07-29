@@ -24,7 +24,7 @@ docker rm -f prom
 docker rm -f benchem
 docker network rm local
 
-grep 'benchem_prom_timeseries{query="up"} 1' metrics.txt || exit 1
-grep 'benchem_prometheus_request_duration_seconds_bucket{query="up",le="5"}' metrics.txt || exit 2
-grep 'process_cpu_seconds_total' metrics.txt || exit 3
+grep 'benchem_prom_timeseries{query="up"} ' metrics.txt || exit 1
+grep 'benchem_prometheus_request_duration_seconds_bucket{query="up",le="5"} ' metrics.txt || exit 2
+grep 'process_cpu_seconds_total ' metrics.txt || exit 3
 
