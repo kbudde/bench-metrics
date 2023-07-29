@@ -6,6 +6,8 @@ metadata:
     app.kubernetes.io/name: bench
 data:
   BENCH_URL: http://thanos-query.promstack.svc.cluster.local:9090/
+  BENCH_QUERY_RANGE_SECS: "7200"
+  BENCH_QUERY_RANGE_STEPS: "30"
   LOG: DEBUG
   BENCH_QUERIES_TOP5_PROM_HTTP_REQUESTS: topk by (code) (5, prometheus_http_requests_total)
   BENCH_QUERIES_COUNT_UP: count(up)

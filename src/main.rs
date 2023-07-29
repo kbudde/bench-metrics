@@ -40,9 +40,6 @@ lazy_static! {
     .unwrap();
 }
 
-const QUERY_RANGE: u64 = 24 * 60 * 60; // 24h
-const QUERY_STEPS: f64 = 30.0;
-
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
     init_logger();
@@ -86,9 +83,20 @@ fn init_logger() {
 // https://github.com/softprops/envy/issues/56
 serde_with::with_prefix!(queries "queries_");
 
+fn default_query_range_secs() -> i64 {
+    7200
+}
+fn default_query_range_steps() -> f64 {
+    30.0
+}
+
 #[derive(Serialize, Deserialize, Debug)]
 struct Config {
     url: String,
+    #[serde(default = "default_query_range_secs")]
+    query_range_secs: i64,
+    #[serde(default = "default_query_range_steps")]
+    query_range_steps: f64,
     // PREFIX_QUERIES_X=y will map to Hashmap {"x": "y"}
     #[serde(flatten, with = "queries")]
     queries: HashMap<String, String>,
@@ -109,6 +117,8 @@ impl Config {
 struct PrometheusClient {
     client: Client,
     queries: HashMap<String, String>,
+    range: i64,
+    steps: f64,
 }
 
 impl Clone for PrometheusClient {
@@ -116,6 +126,8 @@ impl Clone for PrometheusClient {
         PrometheusClient {
             client: self.client.clone(),
             queries: self.queries.clone(),
+            range: self.range,
+            steps: self.steps,
         }
     }
 }
@@ -128,18 +140,20 @@ impl PrometheusClient {
         let pc = PrometheusClient {
             client: c,
             queries: config.queries.to_owned(),
+            range: config.query_range_secs,
+            steps: config.query_range_steps,
         };
         Ok(pc)
     }
 
     async fn query_range(&self, name: &str, query: &str) {
         let end = Utc::now();
-        let start = end - Duration::seconds(QUERY_RANGE as i64);
+        let start = end - Duration::seconds(self.range);
 
         let start = start.timestamp();
         let end = end.timestamp();
 
-        let steps = QUERY_STEPS;
+        let steps = self.steps;
 
         let timer = PROM_REQ_HISTOGRAM.with_label_values(&[&name]).start_timer();
         let result = self
@@ -233,6 +247,8 @@ mod tests {
         let config = Config {
             url: "http://localhost:10902/".to_string(),
             queries: HashMap::new(),
+            query_range_secs: 60,
+            query_range_steps: 30.0,
         };
 
         let client = PrometheusClient::from_config(&config).unwrap();
