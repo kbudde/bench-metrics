@@ -18,6 +18,8 @@ done
 sleep 5
 curl http://localhost:9898 > metrics.txt
 
+cat metrics.txt
+
 docker rm -f prom
 docker rm -f benchem
 docker network rm local
