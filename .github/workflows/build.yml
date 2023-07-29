@@ -43,16 +43,19 @@ jobs:
       - name: docker image smoke test
         # missing depencies will prevent starting the application.
         run: |
-          docker run --name benchem -d -it -e BENCH_URL="http://localhost:9090/" kbudde/bench-metrics:latest 
+          docker run --name benchem -d -it -e BENCH_URL="http://localhost:9090/" kbudde/bench-metrics:latest
           sleep 15s
           docker logs benchem|grep "Benchem started" || {
-            echo "Issue with docker image. Start up log message not found" 
+            echo "Issue with docker image. Start up log message not found"
             echo "## Output: $(docker logs benchem)"
             exit 1;
           }
-          docker rm -f benchem || echo "ok"      
-      
-      ## if: github.ref == 'refs/heads/main' ##    
+          docker rm -f benchem || echo "ok"
+
+      - name: integration test
+        run: ./integration_test/check.sh
+
+      ## if: github.ref == 'refs/heads/main' ##
 
       - name: Login to Docker Hub
         if: github.ref == 'refs/heads/main'
@@ -60,7 +63,7 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-          
+
       - name: Push Docker image
         if: github.ref == 'refs/heads/main'
         run: |
