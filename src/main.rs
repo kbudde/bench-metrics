@@ -9,7 +9,7 @@ use std::error::Error;
 use std::fs::File;
 use std::io::prelude::*;
 use std::io::stdout;
-use std::sync::Arc;
+
 use std::time::{Duration, SystemTime};
 use structured_logger::{json::new_writer, Builder};
 
@@ -56,16 +56,11 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
     let addr = ([0, 0, 0, 0], 9898).into();
 
-    let client = Arc::new(PrometheusClient::from_config(&config)?);
+    let client = PrometheusClient::from_config(&config)?;
 
     let metrics = make_service_fn(move |_| {
         let client = client.clone();
-        async move {
-            Ok::<_, hyper::Error>(service_fn(move |req| {
-                let client = client.clone();
-                handler(req, client)
-            }))
-        }
+        async move { Ok::<_, hyper::Error>(service_fn(move |req| handler(req, client.to_owned()))) }
     });
 
     let server = Server::bind(&addr).serve(metrics);
@@ -208,7 +203,7 @@ impl PrometheusClient {
 
 async fn handler(
     _req: Request<Body>,
-    pc: Arc<PrometheusClient>,
+    pc: PrometheusClient,
 ) -> Result<Response<Body>, hyper::Error> {
     let encoder = TextEncoder::new();
 
