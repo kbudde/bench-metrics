@@ -1080,9 +1080,9 @@ checksum = "73473c0e59e6d5812c5dfe2a064a6444949f089e20eec9a2e5506596494e4623"
 
 [[package]]
 name = "structured-logger"
-version = "1.0.2"
+version = "1.0.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "34451933278cbfed67c91f385afdcdf5ea05d635bc033fc4908c69fe87a840b9"
+checksum = "16524b1ef57fd2e253216ab20ec44f0dc32b29155a4b3e6bef0a857d8c9f5f08"
 dependencies = [
  "log",
  "parking_lot",
