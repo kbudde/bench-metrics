@@ -1,4 +1,4 @@
-FROM rust:1.75-slim-buster as build
+FROM rust:1.77-slim-buster as build
 # Found at https://dev.to/rogertorres/first-steps-with-docker-rust-30oi
 
 # create a new empty shell project
